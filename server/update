@@ -12,11 +12,146 @@ old_value = ARGV[1]
 new_value = ARGV[2]
 repo_path = Dir.pwd
 
-require_relative '../lib/gitlab_custom_hook'
+####################################################################################################################################
 
-if GitlabCustomHook.new.update(ref_name, old_value, new_value, repo_path)
-  exit 0
-else
-  exit 1
+
+class CustomGitHooks
+
+  #get branch type
+  def getBranchType(ref_name)
+    ref_list = ref_name.split("/")
+    type = ref_list[1]
+    name = ref_list[2]
+    return type, name
+  end
+
+  #get project name
+  def getProjectName(repo_path)
+    ref_list = repo_path.split("/")
+    project_name = ref_list[7].split("/")[0]
+    return project_name
+  end
+
+  #get operation type
+  def getOperationType(old_value, new_value, branch_type)
+
+    #tag
+    if branch_type == "tags"
+      if old_value =~ /^0+$/
+        operationType = "create"
+      else
+        operationType = "delete"
+      end
+    end
+
+    #branch
+    if branch_type == "heads"
+      if old_value =~ /^0+$/
+        operationType = "create"
+      elsif new_value =~ /^0+$/
+        operationType = "delete"
+      else
+        operationType = "update"
+      end
+    end
+    return operationType
+  end
+
+  #check branch/tag name
+  def checkBranchOrTagName(branch_type, name)
+
+    #check branch
+    if branch_type == "heads"
+      checkBranchName(name)
+    end
+
+    #check tag
+    if branch_type == "tags"
+      checkTagName(name)
+    end
+
+  end
+
+  #check branch name
+  def checkBranchName(branch_name)
+    unless branch_name.split("_").length == 2
+      check_code = 1
+      check_msg = "branch name must have only one _ "
+      return check_code, check_msg
+    end
+
+    if branch_name =~ /\A(dev|hot|reg)(_)/
+      check_code = 1
+      check_msg = "branch name must start with dev|hot|reg"
+      return check_code, check_msg
+    end
+
+    unless branch_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
+      check_code = 1
+      check_msg = "branch name timestamp format is yyyymmdd "
+      return check_code, check_msg
+    end
+
+  end
+
+  #check tag name
+  def checkTagName(tag_name)
+    unless branch_name.split("_").length == 3
+      check_code = 1
+      check_msg = "tag name must have only two _ "
+      return check_code, check_msg
+    end
+
+    if branch_name =~ /\A(dev|reg)(_)/
+      check_code = 1
+      check_msg = "tag name must start with dev|hot|reg"
+      return check_code, check_msg
+    end
+
+    unless branch_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
+      check_code = 1
+      check_msg = "tag name timestamp format is yyyymmdd "
+      return check_code, check_msg
+    end
+
+    unless branch_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
+      check_code = 1
+      check_msg = "tag name timestamp format is yyyymmdd "
+      return check_code, check_msg
+    end
+
+    unless branch_name.split("_")[2] =~ /(?<!\d)\d\d(?!\d)/
+      check_code = 1
+      check_msg = "tag num formt must has two nums "
+      return check_code, check_msg
+    end
+  end
+
 end
+
+local = CustomGitHooks.new
+
+type, name = local.getBranchType(ref_name)
+printf "type:" + type + "\n"
+printf "name:" + name + "\n"
+
+project_name = local.getProjectName(repo_path)
+printf "project_name:" + project_name + "\n"
+
+operationType = local.getOperationType(old_value,new_value,type)
+printf "operationType:" + operationType + "\n"
+
+code,message = local.checkBranchOrTagName(type,name)
+
+
+
+####################################################################################################################################
+#
+# require_relative '../lib/gitlab_custom_hook'
+#
+# if GitlabCustomHook.new.update(ref_name, old_value, new_value, repo_path)
+#   exit 0
+# else
+#   exit 1
+# end
 
