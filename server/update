@@ -116,31 +116,31 @@ class CustomGitHooks
   def checkTagName(tag_name)
     check_code = 0
     check_msg = "success"
-    unless branch_name.split("_").length == 3
+    unless tag_name.split("_").length == 3
       check_code = 1
       check_msg = "tag name must have only two _ "
       return check_code, check_msg
     end
 
-    unless branch_name =~ /\A(dev|reg)(_)/
+    unless tag_name =~ /\A(dev|reg)(_)/
       check_code = 1
       check_msg = "tag name must start with dev|hot|reg"
       return check_code, check_msg
     end
 
-    unless branch_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
+    unless tag_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
       check_code = 1
       check_msg = "tag name timestamp format is yyyymmdd "
       return check_code, check_msg
     end
 
-    unless branch_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
+    unless tag_name.split("_")[1] =~ /^[1-9]\d{3}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/
       check_code = 1
       check_msg = "tag name timestamp format is yyyymmdd "
       return check_code, check_msg
     end
 
-    unless branch_name.split("_")[2] =~ /(?<!\d)\d\d(?!\d)/
+    unless tag_name.split("_")[2] =~ /(?<!\d)\d\d(?!\d)/
       check_code = 1
       check_msg = "tag num formt must has two nums "
       return check_code, check_msg
