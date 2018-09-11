@@ -52,10 +52,10 @@ class CustomGitHooks
 
     #tag
     if branch_type == "tags"
-      if old_value =~ /^0+$/
-        operationType = "create"
-      else
+      if new_value =~ /^0+$/
         operationType = "delete"
+      else
+        operationType = "create"
       end
     end
 
