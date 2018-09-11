@@ -7,8 +7,6 @@ ENV['PATH'] = '/opt/gitlab/bin:/opt/gitlab/embedded/bin:' + ENV['PATH']
 # This file was placed here by GitLab. It makes sure that your pushed commits
 # will be processed properly.
 
-require 'logger'
-
 ref_name = ARGV[0]
 old_value = ARGV[1]
 new_value = ARGV[2]
@@ -151,32 +149,19 @@ class CustomGitHooks
   end
 end
 
-
-logger = Logger.new("log.txt")
-logger.level = Logger::INFO
-
-logger.info("ref_name:" + ARGV[0])
-logger.info("old_value:" + ARGV[1])
-logger.info("new_value:" + ARGV[2])
-logger.info("repo_path:" + Dir.pwd)
-
 local = CustomGitHooks.new
 
 group_name = local.getGroupName(repo_path)
 printf "group_name:" + group_name + "\n"
-logger.info("group_name:" + group_name)
 
 project_name = local.getProjectName(repo_path)
 printf "project_name:" + project_name + "\n"
-logger.info("project_name:" + project_name)
 
 branch_type = local.getBranchType(ref_name)
 printf "branch_type:" + branch_type + "\n"
-logger.info("branch_type:" + branch_type)
 
 branch_name = local.getBranchName(ref_name)
 printf "branch_name:" + branch_name + "\n"
-logger.info("branch_name:" + branch_name)
 
 
 #check branchName for each branchType
@@ -198,7 +183,6 @@ end
 
 operation_type = local.getOperationType(old_value, new_value, branch_type)
 printf "operation_type:" + operation_type + "\n"
-logger.info("operation_type:" + operation_type)
 #delete is forbiden
 if operation_type == "delete"
   exit 1
