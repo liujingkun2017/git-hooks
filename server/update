@@ -196,6 +196,7 @@ ary.each do |i|
   end
 end
 
+
 operation_type = local.getOperationType(old_value, new_value, branch_type)
 printf "operation_type:" + operation_type + "\n"
 logger.info("operation_type:" + operation_type)
@@ -204,6 +205,20 @@ if operation_type == "delete"
   exit 1
 end
 
+
+aFile = File.new("log.txt", "w+")
+
+aFile.syswrite("ref_name:" + ref_name + "\n")
+aFile.syswrite("old_value:" + old_value + "\n")
+aFile.syswrite("new_value:" + new_value + "\n")
+aFile.syswrite("repo_path:" + repo_path + "\n")
+
+aFile.syswrite("group_name:" + group_name + "\n")
+aFile.syswrite("project_name:" + project_name + "\n")
+aFile.syswrite("branch_type:" + branch_type + "\n")
+aFile.syswrite("branch_name:" + branch_name + "\n")
+
+aFile.close
 
 ####################################################################################################################################
 
