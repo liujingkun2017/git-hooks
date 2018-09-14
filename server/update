@@ -151,32 +151,12 @@ class CustomGitHooks
   end
 end
 
-
-logger = Logger.new("./log.txt")
-logger.level = Logger::INFO
-
-logger.info("ref_name:" + ARGV[0])
-logger.info("old_value:" + ARGV[1])
-logger.info("new_value:" + ARGV[2])
-logger.info("repo_path:" + Dir.pwd)
-
 local = CustomGitHooks.new
-
 group_name = local.getGroupName(repo_path)
-printf "group_name:" + group_name + "\n"
-logger.info("group_name:" + group_name)
-
 project_name = local.getProjectName(repo_path)
-printf "project_name:" + project_name + "\n"
-logger.info("project_name:" + project_name)
-
 branch_type = local.getBranchType(ref_name)
-printf "branch_type:" + branch_type + "\n"
-logger.info("branch_type:" + branch_type)
-
 branch_name = local.getBranchName(ref_name)
-printf "branch_name:" + branch_name + "\n"
-logger.info("branch_name:" + branch_name)
+operation_type = local.getOperationType(old_value, new_value, branch_type)
 
 
 #check branchName for each branchType
@@ -196,29 +176,10 @@ ary.each do |i|
   end
 end
 
-
-operation_type = local.getOperationType(old_value, new_value, branch_type)
-printf "operation_type:" + operation_type + "\n"
-logger.info("operation_type:" + operation_type)
 #delete is forbiden
-if operation_type == "delete"
+if ("delete".eql?(operation_type))
   exit 1
 end
-
-
-aFile = File.new("log.txt", "w+")
-
-aFile.syswrite("ref_name:" + ref_name + "\n")
-aFile.syswrite("old_value:" + old_value + "\n")
-aFile.syswrite("new_value:" + new_value + "\n")
-aFile.syswrite("repo_path:" + repo_path + "\n")
-
-aFile.syswrite("group_name:" + group_name + "\n")
-aFile.syswrite("project_name:" + project_name + "\n")
-aFile.syswrite("branch_type:" + branch_type + "\n")
-aFile.syswrite("branch_name:" + branch_name + "\n")
-
-aFile.close
 
 ####################################################################################################################################
 
